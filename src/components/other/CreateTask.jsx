@@ -11,30 +11,44 @@ const CreateTask = () => {
     const [asignTo, setAsignTo] = useState('')
     const [category, setCategory] = useState('')
 
-    const [newTask, setNewTask] = useState({})
-
     const submitHandler = (e) => {
         e.preventDefault()
 
-        setNewTask({ taskTitle, taskDescription, taskDate, category, active: false, newTask: true, failed: false, completed: false })
+        // Create new task object
+        const newTask = { 
+            taskTitle, 
+            taskDescription, 
+            taskDate, 
+            category, 
+            active: false, 
+            newTask: true, 
+            failed: false, 
+            completed: false 
+        }
 
-        const data = userData
+        // Create a copy of userData to avoid mutation
+        const data = [...userData]
 
+        // Find and update the employee
         data.forEach(function (elem) {
-            if (asignTo == elem.firstName) {
+            if (asignTo === elem.firstName) {
                 elem.tasks.push(newTask)
                 elem.taskCounts.newTask = elem.taskCounts.newTask + 1
             }
         })
-        setUserData(data)
-        console.log(data);
 
+        // Update React state
+        setUserData(data)
+
+        // *** FIX: Update localStorage to persist the changes ***
+        localStorage.setItem('employees', JSON.stringify(data))
+
+        // Reset form fields
         setTaskTitle('')
         setCategory('')
         setAsignTo('')
         setTaskDate('')
         setTaskDescription('')
-
     }
 
     return (
@@ -52,7 +66,10 @@ const CreateTask = () => {
                             onChange={(e) => {
                                 setTaskTitle(e.target.value)
                             }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='Make a UI design'
+                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
+                            type="text" 
+                            placeholder='Make a UI design'
+                            required
                         />
                     </div>
                     <div>
@@ -62,16 +79,23 @@ const CreateTask = () => {
                             onChange={(e) => {
                                 setTaskDate(e.target.value)
                             }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="date" />
+                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
+                            type="date"
+                            required
+                        />
                     </div>
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Asign to</h3>
+                        <h3 className='text-sm text-gray-300 mb-0.5'>Assign to</h3>
                         <input
                             value={asignTo}
                             onChange={(e) => {
                                 setAsignTo(e.target.value)
                             }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='employee name' />
+                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
+                            type="text" 
+                            placeholder='employee name'
+                            required
+                        />
                     </div>
                     <div>
                         <h3 className='text-sm text-gray-300 mb-0.5'>Category</h3>
@@ -80,16 +104,24 @@ const CreateTask = () => {
                             onChange={(e) => {
                                 setCategory(e.target.value)
                             }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='design, dev, etc' />
+                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
+                            type="text" 
+                            placeholder='design, dev, etc'
+                            required
+                        />
                     </div>
                 </div>
 
                 <div className='w-2/5 flex flex-col items-start'>
                     <h3 className='text-sm text-gray-300 mb-0.5'>Description</h3>
-                    <textarea value={taskDescription}
+                    <textarea 
+                        value={taskDescription}
                         onChange={(e) => {
                             setTaskDescription(e.target.value)
-                        }} className='w-full h-44 text-sm py-2 px-4 rounded outline-none bg-transparent border-[1px] border-gray-400' name="" id=""></textarea>
+                        }} 
+                        className='w-full h-44 text-sm py-2 px-4 rounded outline-none bg-transparent border-[1px] border-gray-400' 
+                        required
+                    ></textarea>
                     <button className='bg-emerald-500 py-3 hover:bg-emerald-600 px-5 rounded text-sm mt-4 w-full'>Create Task</button>
                 </div>
 
